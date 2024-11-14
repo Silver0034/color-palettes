@@ -1,0 +1,9 @@
+---
+const { description, featuredImage, title } = Astro.props
+---
+
+<meta name='twitter:card' content='summary_large_image' />
+<meta name='twitter:description' content={description} />
+{featuredImage && <meta name='twitter:image' content={featuredImage.src} />}
+<meta name='twitter:site' content={TWITTER_USERNAME} />
+<meta name='twitter:title' content={title} />

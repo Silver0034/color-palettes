@@ -1,0 +1,22 @@
+---
+import { formatCanonicalURL } from '@utilities/page-url'
+const { description, featuredImage, title } = Astro.props
+---
+
+<meta property='og:description' content={description} />
+{
+	featuredImage && (
+		<>
+			<meta property='og:image:height' content={featuredImage.height} />
+			<meta property='og:image:type' content={featuredImage.format} />
+			<meta property='og:image:width' content={featuredImage.width} />
+			<meta property='og:image' content={featuredImage.src} />
+		</>
+	)
+}
+
+<meta property='og:locale' content='en_US' />
+<meta property='og:site_name' content={SITE_NAME} />
+<meta property='og:title' content={title} />
+<meta property='og:type' content='website' />
+<meta property='og:url' content={formatCanonicalURL(Astro.url.pathname)} />

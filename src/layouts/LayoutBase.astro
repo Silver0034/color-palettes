@@ -1,0 +1,23 @@
+---
+const { language = 'en' } = Astro.props
+---
+
+<html lang={language}>
+	<head>
+		<slot name='head-start' />
+		<slot name='head' />
+		<slot name='head-end' />
+	</head>
+	<body>
+		<slot name='body-start' />
+		<slot name='header' />
+		<slot name='content-before' />
+		<main id='content'>
+			<slot name='content-start' />
+			<slot />
+			<slot name='content-end' />
+		</main>
+		<slot name='content-after' />
+		<slot name='footer' />
+	</body>
+</html>

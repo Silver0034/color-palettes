@@ -1,0 +1,46 @@
+---
+import type {
+	PropsBase,
+	PropsBlog,
+	PropsBlogPosting,
+	PropsCollectionPage,
+	PropsOrganization
+} from './structured-data-utilities'
+import {
+	getStructuredData,
+	getDataBlog,
+	getDataBlogPosting,
+	getDataCollectionPage,
+	getDataOrganization
+} from './structured-data-utilities'
+
+type AstroProps = {
+	props: PropsBase | PropsBlog | PropsBlogPosting | PropsCollectionPage
+}
+
+const { props } = Astro.props as AstroProps
+
+let data
+
+if (props['@type'] === 'Blog') {
+	data = getDataBlog(props as PropsBlog)
+}
+
+if (props['@type'] === 'BlogPosting') {
+	data = getDataBlogPosting(props as PropsBlogPosting)
+}
+
+if (props['@type'] === 'CollectionPage') {
+	data = getDataCollectionPage(props as PropsCollectionPage)
+}
+
+if (props['@type'] === 'Organization') {
+	data = getDataOrganization(props as PropsOrganization)
+}
+
+if (!data) data = getStructuredData(props)
+
+const json = JSON.stringify(data)
+---
+
+<script type='application/ld+json' set:html={json} is:inline />

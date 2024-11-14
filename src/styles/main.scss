@@ -1,0 +1,7 @@
+@use 'reset';
+@use '../../public/styles/font-fallbacks.css';
+
+:root {
+	font-family: 'Montserrat Fallback: Arial', 'Montserrat Fallback: Roboto',
+		'sans-serif';
+}

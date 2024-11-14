@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Montserrat Fallback: Arial";
+  src: local('Arial'), local('ArialMT');
+  font-display: swap;
+  ascent-override: 81.4217%;
+  descent-override: 21.1125%;
+  line-gap-override: 0%;
+  size-adjust: 118.8872%;
+}
+@font-face {
+  font-family: "Montserrat Fallback: Roboto";
+  src: local('Roboto'), local('Roboto-Regular');
+  font-display: swap;
+  ascent-override: 81.2434%;
+  descent-override: 21.0662%;
+  size-adjust: 119.1482%;
+}

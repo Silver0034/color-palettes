@@ -1,0 +1,70 @@
+---
+import { formatCanonicalURL } from '@utilities/page-url'
+import Footer from '@components/Footer.astro'
+// import GoogleTagManagerBodyScripts from '@components/GoogleTagManagerBodyScripts.astro'
+// import GoogleTagManagerHeadScripts from '@components/GoogleTagManagerHeadScripts.astro'
+import Header from '@components/Header.astro'
+import LayoutBase from './LayoutBase.astro'
+import MetaTags from '@components/MetaTags.astro'
+import OpenGraphMetaTags from '@components/OpenGraphMetaTags.astro'
+import StructuredData from '@components/StructuredData'
+import TwitterMetaTags from '@components/TwitterMetaTags.astro'
+import UserWayScripts from '@components/UserWayScripts.astro'
+import '@fontsource/montserrat'
+import '@styles/main.scss'
+// Images
+// import defaultFeaturedImage from '@assets/hero.png'
+
+const {
+	datePublished,
+	description,
+	// featuredImage = defaultFeaturedImage,
+	language = 'en',
+	structuredDataHasPart,
+	structuredDataMainEntity,
+	structuredDataType,
+	title
+} = Astro.props
+
+const url = formatCanonicalURL(Astro.url.pathname)
+---
+
+<LayoutBase lang={language}>
+	<!-- Tracking scripts -->
+	<!-- <GoogleTagManagerBodyScripts slot='body-start' />
+	<GoogleTagManagerHeadScripts slot='head-start' /> -->
+	<MetaTags description={description} title={title} slot='head-start' />
+	<UserWayScripts slot='body-end' />
+
+	<!-- SEO & Meta Tags -->
+	<OpenGraphMetaTags title={title} slot='head-start' />
+	<StructuredData
+		props={{
+			'@type': structuredDataType,
+			datePublished,
+			description,
+			hasPart: structuredDataHasPart,
+			mainEntity: structuredDataMainEntity,
+			title,
+			url
+		}}
+	/>
+	<TwitterMetaTags title={title} slot='head-start' />
+
+	<!-- Page Content -->
+	<Header slot='header' transition:persist />
+	<Footer slot='footer' />
+
+	<!-- Slots to pass content to layout base -->
+	<slot />
+	<slot name='body-start' slot='body-start' />
+	<slot name='content-after' slot='content-after' />
+	<slot name='content-before' slot='content-before' />
+	<slot name='content-end' slot='content-end' />
+	<slot name='content-start' slot='content-start' />
+	<slot name='footer' slot='footer' />
+	<slot name='head-end' slot='head-end' />
+	<slot name='head-start' slot='head-start' />
+	<slot name='head' slot='head-start' />
+	<slot name='header' slot='header' />
+</LayoutBase>

@@ -1,0 +1,27 @@
+{
+	"name": "astro-js-template",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"build:fonts": "node ./scripts/font-fallbacks.js",
+		"dev": "npm run build:fonts && astro dev",
+		"start": "npm run build:fonts && astro dev",
+		"build": "npm run build:fonts && astro check && astro build",
+		"preview": "npm run build:fonts && astro preview",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"@astrojs/check": "^0.9.4",
+		"@astrojs/sitemap": "^3.2.1",
+		"@capsizecss/core": "^4.1.2",
+		"@capsizecss/metrics": "^3.3.0",
+		"@capsizecss/unpack": "^2.3.0",
+		"@fontsource/montserrat": "^5.1.0",
+		"astro": "^4.16.10",
+		"typescript": "^5.6.3"
+	},
+	"devDependencies": {
+		"prettier": "^3.3.3",
+		"sass": "^1.80.4"
+	}
+}
