@@ -7,10 +7,12 @@ const { ORIGIN } = constants
 
 // https://astro.build/config
 export default defineConfig({
+	integrations: [sitemap()],
+	prefetch: {
+		prefetchAll: true
+	},
 	site: ORIGIN,
 	vite: {
 		define: { ...stringifiedConstants }
-	},
-
-	integrations: [sitemap()]
+	}
 })
