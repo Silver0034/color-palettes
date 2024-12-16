@@ -1,0 +1,44 @@
+section {
+	background-color: var(--color-neutral);
+}
+ul {
+	list-style: none;
+	padding: 0;
+}
+
+summary {
+	font-weight: bold;
+	font-size: var(--font-size-large);
+}
+
+details {
+	padding-block: 1.25rem;
+	border-bottom: 1px solid var(--color-dim);
+}
+
+details > summary {
+	list-style: none;
+	cursor: pointer;
+}
+details > summary::-webkit-details-marker,
+details > summary::marker {
+	display: none;
+}
+
+svg {
+	float: right;
+	transition: transform 0.3s;
+}
+
+details[open] svg {
+	transform: rotate(-180deg);
+}
+
+h2 {
+	text-align: center;
+}
+
+.ctas {
+	display: flex;
+	justify-content: center;
+}

@@ -1,0 +1,54 @@
+@use 'sass:map';
+@use 'sass:list' as *;
+
+@function setParts($hue, $sat, $lit) {
+	@return (hue: $hue, 'sat': $sat, 'lit': $lit);
+}
+
+@function setColorFromParts($parts) {
+	$hue: map.get($parts, 'hue');
+	$sat: map.get($parts, 'sat');
+	$lit: map.get($parts, 'lit');
+	$alpha: map.get($parts, 'alpha');
+	@if $alpha == null {
+		$alpha: 1;
+	}
+
+	@return hsla($hue, $sat, $lit, $alpha);
+}
+
+$color-parts: (
+	background: setParts(0, 0%, 100%),
+	text: setParts(240, 15%, 15%)
+);
+
+$colors: ();
+
+// For each color part, setColorFromParts with same name
+@each $name, $parts in $color-parts {
+	$colors: map.merge(
+		$colors,
+		(
+			$name: setColorFromParts($parts)
+		)
+	);
+}
+
+// For each color part, add opacity variants to $colors #{$name}-opacity-${100 - 900}: setColorFromParts($parts, 0.1 - 1)
+$opacity-variants: ();
+@each $name, $color in $color-parts {
+	@for $i from 1 through 19 {
+		$opacity: $i * 0.05;
+		$hue: map.get($color, 'hue');
+		$sat: map.get($color, 'sat');
+		$lit: map.get($color, 'lit');
+
+		$opacity-variants: map.merge(
+			$opacity-variants,
+			(#{$name}-opacity-#{$i * 50}: hsla($hue, $sat, $lit, $opacity))
+		);
+	}
+}
+
+// Add each opacity variant to $colors
+$colors: map.merge($colors, $opacity-variants);

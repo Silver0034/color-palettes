@@ -1,21 +1,31 @@
 ---
+// Imports & components
+import { Icon } from 'astro-icon/components'
+import Layout from '@layouts/LayoutPage.astro'
+
+// Page title for SEO / Featured Image / Meta Tags
+export const title = 'The Home Page from my Astro Template'
+
 // Local constants
-const title = 'Home Page',
+const tabTitle = 'Home Page',
 	description =
 		'This is a page description and it needs to be between 12 and 160 characters. This is a page description and it needs to be between 12 and 160 characters.',
 	structuredDataType = 'Organization'
 
-// Components
-import Layout from '@layouts/LayoutPage.astro'
-
 // Images
-// import featuredImage from '@assets/hero.png'
+// import featuredImage from '@assets/homepage-featured-image.png'
 ---
 
 <Layout
 	description={description}
 	structuredDataType={structuredDataType}
 	title={title}
+	tabTitle={tabTitle}
 >
-	<h1>Hello World</h1>
+	<Icon name='logo' />
+
+	<h1>
+		Hello World
+		<Icon name='fa6-solid:check' />
+	</h1>
 </Layout>

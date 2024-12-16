@@ -1,0 +1,51 @@
+---
+import { getQuestions } from './utilities'
+import { getUTMLink } from '@utilities/page-url'
+import { Icon } from 'astro-icon/components'
+import Button from '@components/Button'
+
+const { location, ctaHref, ctaText, showHeading = true } = Astro.props
+
+const questions = await getQuestions(location)
+---
+
+<style lang='scss'>
+	@use './styles';
+</style>
+
+<section id='faq' data-motion='up'>
+	{showHeading && <h2 title='Frequently Asked Questions'>FAQ</h2>}
+
+	<ul>
+		{
+			questions.map(({ data, id }) => {
+				const { question, answer } = data
+				return (
+					<li data-motion='up-left'>
+						<details id={id}>
+							<summary>
+								{question}
+								<Icon
+									name='tabler:chevron-down'
+									width='24'
+									height='24'
+								/>
+							</summary>
+							<div set:html={answer} />
+						</details>
+					</li>
+				)
+			})
+		}
+	</ul>
+	{
+		ctaHref && ctaText && (
+			<div class='ctas'>
+				<Button
+					href={getUTMLink(ctaHref, Astro.url.pathname + '#faq')}
+					text={ctaText}
+				/>
+			</div>
+		)
+	}
+</section>

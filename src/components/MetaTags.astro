@@ -8,7 +8,7 @@ import Favicon from '@assets/favicon.svg'
 const {
 	description,
 	robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
-	title
+	tabTitle
 } = Astro.props
 
 const url = formatCanonicalURL(Astro.url.pathname)
@@ -26,16 +26,17 @@ if (
 }
 
 // Validate title & length for SEO
-if (!title || title.length > title_max_length) {
+if (!tabTitle || tabTitle.length > title_max_length) {
 	throw new Error(
-		`Title is required & must be less than ${title_max_length} characters
-		\nCurrent length: ${title.length}`
+		`tabTitle is required & must be less than ${title_max_length} characters
+		Current length: ${tabTitle.length}
+		${tabTitle}`
 	)
 }
 ---
 
 <link rel='canonical' href={url} />
-<link rel='icon' type='image/svg+xml' href={Favicon} />
+<link rel='icon' type='image/svg+xml' href={Favicon.src} />
 <link rel='sitemap' href='/sitemap-index.xml' />
 <meta charset='utf-8' />
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
@@ -46,4 +47,4 @@ if (!title || title.length > title_max_length) {
 <meta name='robots' content={robots} />
 <meta name='viewport' content='width=device-width' />
 <meta property='article:publisher' content={SOCIAL_URL_FACEBOOK} />
-<title>{title} - {SITE_NAME}</title>
+<title>{tabTitle} - {SITE_NAME}</title>

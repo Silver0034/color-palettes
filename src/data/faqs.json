@@ -1,0 +1,8 @@
+[
+	{
+		"id": "how-to-add-faq-questions",
+		"question": "How do I add a new FAQ question?",
+		"answer": "<p>Add or remove questions from the /src/data/faqs.json file. Use location to set the question to only show in FAQ components with a matching location set, or leave location blank if it is only going to show when faqs are unfiltered.</p>",
+		"location": "preview"
+	}
+]

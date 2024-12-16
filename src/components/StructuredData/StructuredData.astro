@@ -4,21 +4,36 @@ import type {
 	PropsBlog,
 	PropsBlogPosting,
 	PropsCollectionPage,
-	PropsOrganization
+	PropsFAQ,
+	PropsOrganization,
+	SchemaQuestion
 } from './structured-data-utilities'
 import {
-	getStructuredData,
 	getDataBlog,
 	getDataBlogPosting,
 	getDataCollectionPage,
-	getDataOrganization
+	getDataFAQ,
+	getDataFAQQuestions,
+	getDataOrganization,
+	getStructuredData
 } from './structured-data-utilities'
+import { getQuestions } from '@components/FAQs'
 
 type AstroProps = {
-	props: PropsBase | PropsBlog | PropsBlogPosting | PropsCollectionPage
+	props:
+		| PropsBase
+		| PropsBlog
+		| PropsBlogPosting
+		| PropsCollectionPage
+		| PropsFAQ
+		| PropsOrganization
+	questions: string
 }
 
-const { props } = Astro.props as AstroProps
+const { props, questions: questionLocation } = Astro.props as AstroProps
+
+let questions
+if (questionLocation) questions = await getQuestions(questionLocation)
 
 let data
 
@@ -34,13 +49,57 @@ if (props['@type'] === 'CollectionPage') {
 	data = getDataCollectionPage(props as PropsCollectionPage)
 }
 
+if (props['@type'] === 'FAQPage') {
+	data = getDataFAQ(props as PropsFAQ)
+}
+
 if (props['@type'] === 'Organization') {
 	data = getDataOrganization(props as PropsOrganization)
 }
 
 if (!data) data = getStructuredData(props)
 
-const json = JSON.stringify(data)
+let dataQuestions = [] as SchemaQuestion[]
+if (questions) {
+	const { url } = props
+	dataQuestions = getDataFAQQuestions(questions, url)
+
+	// Add the id of each question to the main entity
+	dataQuestions.forEach((question) => {
+		if (!data.mainEntity) {
+			data.mainEntity = []
+		}
+
+		data.mainEntity.push({
+			'@id': question['@id']
+		})
+	})
+}
+
+let organizations = []
+if (data['@type'] !== 'Organization') {
+	const organization = getDataOrganization({
+		...props,
+		'@type': 'Organization'
+	} as PropsOrganization)
+
+	organizations.push(organization)
+
+	if (!data.publisher) {
+		data.publisher = []
+	}
+
+	data.publisher.push({
+		'@id': organization['@id']
+	})
+}
+
+const everything = {
+	'@context': 'https://schema.org',
+	'@graph': [data, ...dataQuestions, ...organizations]
+}
+
+const json = JSON.stringify(everything)
 ---
 
 <script type='application/ld+json' set:html={json} is:inline />

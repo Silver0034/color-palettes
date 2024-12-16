@@ -1,0 +1,43 @@
+---
+import { Icon } from 'astro-icon/components'
+
+const { id, href, variant = '', style, icon } = Astro.props
+let { text, target } = Astro.props
+
+if (!text) throw new Error('Button component requires a text prop')
+
+const classes = variant ? `button ${variant}` : 'button'
+
+const Tag = href ? 'a' : 'button'
+
+const isInternal = href && (href.includes(ORIGIN) || href.startsWith('/'))
+
+if (href && !target) target = isInternal ? '_self' : '_blank'
+
+let title = text
+
+if (target === '_blank') {
+	title += ' (Opens in a new tab)'
+}
+---
+
+<Tag
+	id={id}
+	class={classes}
+	href={href}
+	target={target}
+	style={style}
+	title={title}
+>
+	{icon && <Icon name={icon} width='1.5em' height='1.5em' />}
+	<span class='button__text'>{text}</span>
+	{
+		target === '_blank' && (
+			<span class='screen-reader-text'>(Opens in a new tab)</span>
+		)
+	}
+</Tag>
+
+<style lang='scss'>
+	@use './styles.scss';
+</style>

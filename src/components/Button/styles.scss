@@ -1,0 +1,84 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '@styles/colors' as *;
+
+$variants: map.keys($colors);
+// Add "current" to the list of variants
+$variants: list.append($variants, 'current');
+
+.button {
+	--btn-color: var(--color-text);
+	--btn-color-border: var(--color-text);
+	--btn-color-background: transparent;
+	--btn-color-hover: var(--color-text);
+	--btn-color-border-hover: var(--color-tertiary);
+	--btn-color-background-hover: var(--color-tertiary);
+
+	--color-current: currentColor;
+
+	&.background {
+		--btn-color: var(--btn-color-background);
+		--btn-color-border: var(--btn-color-background);
+	}
+
+	@each $variant in $variants {
+		&.#{$variant} {
+			--btn-color: var(--color-#{$variant});
+			--btn-color-border: var(--color-#{$variant});
+		}
+
+		&.fill-#{$variant} {
+			--btn-color-border: var(--color-#{$variant});
+			--btn-color-background: var(--color-#{$variant});
+		}
+	}
+
+	&.fill-text {
+		--btn-color: var(--color-background);
+	}
+
+	&.fill-tertiary {
+		--btn-color-border-hover: var(--color-primary);
+		--btn-color-background-hover: var(--color-primary);
+	}
+
+	position: relative;
+	display: inline-flex;
+	gap: 1em;
+	padding: 0.5em 1em;
+	border: 1px solid var(--btn-color-border);
+	border-radius: 2em;
+	color: var(--btn-color);
+	background-color: var(--btn-color-background);
+	text-decoration: none;
+	overflow: hidden;
+	z-index: 1;
+	transition:
+		border-color 0.25s ease-in-out,
+		color 0.25s ease-in-out;
+	margin-block-start: 1rem;
+	cursor: pointer;
+	vertical-align: top;
+	align-items: center;
+	justify-content: center;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: -5%;
+		background-color: var(--btn-color-background-hover);
+		// transform: translateX(-100%);
+		transform: skew(15deg) translateX(-110%);
+		z-index: -1;
+		transition: transform 0.25s ease-in-out;
+	}
+
+	&:hover,
+	&:focus {
+		color: var(--btn-color-hover);
+		border-color: var(--btn-color-border-hover);
+		&::after {
+			transform: skew(15deg) translateX(0);
+		}
+	}
+}

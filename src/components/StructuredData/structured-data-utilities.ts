@@ -1,8 +1,11 @@
+import type { CollectionEntry } from 'astro:content'
+
 export interface PropsBase {
 	'@type'?:
 		| 'Blog'
 		| 'BlogPosting'
 		| 'CollectionPage'
+		| 'FAQPage'
 		| 'Organization'
 		| 'WebPage'
 	description: string
@@ -15,9 +18,11 @@ export interface PropsBlogPosting extends PropsBase {
 	datePublished: string
 }
 
+type PropsBlogMainEntity = PropsBlogPosting[]
+
 export interface PropsBlog extends PropsBase {
 	'@type': 'Blog'
-	mainEntity: PropsBlogPosting[]
+	mainEntity: PropsBlogMainEntity
 }
 
 export interface PropsCollectionPage extends PropsBase {
@@ -25,9 +30,37 @@ export interface PropsCollectionPage extends PropsBase {
 	hasPart: PropsBase[]
 }
 
+export interface PropsFAQItem {
+	'@type': 'Question'
+	name: string
+	acceptedAnswer: {
+		'@type': 'Answer'
+		text: string
+	}
+}
+
+export interface PropsFAQ extends PropsBase {
+	'@type': 'FAQPage'
+	mainEntity: PropsFAQItem[]
+}
+
+export interface PropsFAQQuestion {
+	answer: string
+	position: number
+	id: string
+	question: string
+	url: string
+}
+
+export type PropsFAQQuestions = CollectionEntry<'faqs'>[]
+
 export interface PropsOrganization extends PropsBase {
 	'@type': 'Organization'
 }
+
+export type mainEntityDefault = {
+	'@id': string
+}[]
 
 export interface SchemaBase {
 	'@context': string
@@ -36,6 +69,9 @@ export interface SchemaBase {
 	name: string
 	url: string
 	sameAs: string[]
+	publisher?: {
+		'@id': string
+	}[]
 }
 
 export interface SchemaBlogPosting extends SchemaBase {
@@ -45,7 +81,10 @@ export interface SchemaBlogPosting extends SchemaBase {
 	}
 	datePublished: string
 	headline: string
+	mainEntity?: SchemaBlogMainEntity
 }
+
+type SchemaBlogMainEntity = SchemaBlogPosting[]
 
 export interface SchemaBlog extends SchemaBase {
 	mainEntity: SchemaBlogPosting[]
@@ -55,7 +94,28 @@ export interface SchemaCollectionPage extends SchemaBase {
 	hasPart: SchemaBase[]
 }
 
+type SchemaFAQMainEntity = PropsFAQItem[]
+export interface SchemaFAQ extends SchemaBase {
+	mainEntity: SchemaFAQMainEntity
+}
+
+export interface SchemaQuestion {
+	'@type': 'Question'
+	'@id': string
+	position: number
+	url: string
+	name: string
+	answerCount: number
+	acceptedAnswer: {
+		'@type': 'Answer'
+		text: string
+		inLanguage: string
+	}
+	inLanguage: string
+}
+
 export interface SchemaOrganization extends SchemaBase {
+	'@id': string
 	address: {
 		'@type': string
 		streetAddress: string
@@ -64,23 +124,10 @@ export interface SchemaOrganization extends SchemaBase {
 		postalCode: string
 		addressCountry: string
 	}
-	contactPoint: {
+	contactPoint?: {
 		'@type': string
 		email: string
 		contactType: string
-	}
-}
-
-export function getStructuredData(props: PropsBase): SchemaBase {
-	const { description, title, url } = props
-
-	return {
-		'@context': 'https://schema.org',
-		'@type': props['@type'] ?? 'WebPage',
-		description,
-		name: title,
-		sameAs: [SOCIAL_URL_FACEBOOK, SOCIAL_URL_TWITTER, SOCIAL_URL_LINKEDIN],
-		url: url
 	}
 }
 
@@ -129,10 +176,66 @@ export function getDataCollectionPage(
 	}
 }
 
+export function getDataFAQ(props: PropsFAQ): SchemaFAQ {
+	const { mainEntity } = props as {
+		mainEntity: PropsFAQItem[]
+	}
+
+	return {
+		mainEntity,
+		...getStructuredData(props)
+	}
+}
+
+export function getDataFAQQuestion(props: PropsFAQQuestion): SchemaQuestion {
+	const { answer, position, id, question, url } = props
+
+	const finalUrl = `${url}#${id}`
+
+	return {
+		'@type': 'Question',
+		'@id': finalUrl,
+		position,
+		url: finalUrl,
+		name: question,
+		answerCount: 1,
+		acceptedAnswer: {
+			'@type': 'Answer',
+			text: answer,
+			inLanguage: 'en-US'
+		},
+		inLanguage: 'en-US'
+	}
+}
+
+export function getDataFAQQuestions(
+	questions: PropsFAQQuestions,
+	url: string
+): SchemaQuestion[] {
+	const questionArray = [] as SchemaQuestion[]
+
+	questions.forEach((question, index) => {
+		const { data, id } = question
+		const { answer, question: questionText } = data
+		questionArray.push(
+			getDataFAQQuestion({
+				answer,
+				id,
+				question: questionText,
+				url,
+				position: index + 1
+			})
+		)
+	})
+
+	return questionArray
+}
+
 export function getDataOrganization(
 	props: PropsOrganization
 ): SchemaOrganization {
 	return {
+		'@id': `${ORIGIN}#organization`,
 		address: {
 			'@type': 'PostalAddress',
 			streetAddress: ADDRESS_STREET,
@@ -147,5 +250,18 @@ export function getDataOrganization(
 		// 	contactType: 'Customer Service'
 		// },
 		...getStructuredData(props)
+	}
+}
+
+export function getStructuredData(props: PropsBase): SchemaBase {
+	const { description, title, url } = props
+
+	return {
+		'@context': 'https://schema.org',
+		'@type': props['@type'] ?? 'WebPage',
+		description,
+		name: title,
+		sameAs: [SOCIAL_URL_FACEBOOK, SOCIAL_URL_TWITTER, SOCIAL_URL_LINKEDIN],
+		url: url
 	}
 }

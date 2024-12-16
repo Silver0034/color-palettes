@@ -1,8 +1,8 @@
 ---
-const { language = 'en' } = Astro.props
+const { class: list, language = 'en' } = Astro.props
 ---
 
-<html lang={language}>
+<html lang={language} class:list={list}>
 	<head>
 		<slot name='head-start' />
 		<slot name='head' />
@@ -21,3 +21,8 @@ const { language = 'en' } = Astro.props
 		<slot name='footer' />
 	</body>
 </html>
+
+<script>
+	import { MotionManager } from '@utilities/motion'
+	new MotionManager()
+</script>
