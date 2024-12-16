@@ -6,8 +6,9 @@ import roboto from '@capsizecss/metrics/roboto'
 import { fromFile } from '@capsizecss/unpack'
 
 const fonts = {
-	Montserrat:
-		'./node_modules/@fontsource/montserrat/files/montserrat-latin-700-normal.woff'
+	Inter: './node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2',
+	Truculenta:
+		'./node_modules/@fontsource/truculenta/files/truculenta-latin-400-normal.woff2'
 }
 
 async function generateFontFace(fontName, fontPath) {
