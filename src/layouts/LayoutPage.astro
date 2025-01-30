@@ -1,15 +1,7 @@
 ---
 import { formatCanonicalURL } from '@utilities/page-url'
-import Footer from '@components/Footer.astro'
-// import GoogleTagManagerBodyScripts from '@components/GoogleTagManagerBodyScripts.astro'
-// import GoogleTagManagerHeadScripts from '@components/GoogleTagManagerHeadScripts.astro'
-import Header from '@components/Header.astro'
 import LayoutBase from '@layouts/LayoutBase.astro'
-import MetaTags from '@components/MetaTags.astro'
-import OpenGraphMetaTags from '@components/OpenGraphMetaTags.astro'
-import StructuredData from '@components/StructuredData'
-import TwitterMetaTags from '@components/TwitterMetaTags.astro'
-import UserWayScripts from '@components/UserWayScripts.astro'
+
 import '@fontsource/inter'
 import '@fontsource/truculenta'
 import '@styles/main.scss'
@@ -48,40 +40,6 @@ const url = formatCanonicalURL(Astro.url.pathname)
 
 <LayoutBase language={language} class:list={list}>
 	<!-- Tracking scripts -->
-	<!-- <GoogleTagManagerBodyScripts slot='body-start' />
-	<GoogleTagManagerHeadScripts slot='head-start' /> -->
-	<MetaTags description={description} tabTitle={titleTab} slot='head-start' />
-	<UserWayScripts slot='body-end' />
-
-	<!-- SEO & Meta Tags -->
-	<OpenGraphMetaTags
-		featuredImage={featuredImage}
-		title={title}
-		description={description}
-		slot='head-start'
-	/>
-	<StructuredData
-		props={{
-			'@type': structuredDataType,
-			datePublished,
-			description,
-			hasPart: structuredDataHasPart,
-			mainEntity: structuredDataMainEntity,
-			title,
-			url
-		}}
-		questions={questions}
-	/>
-	<TwitterMetaTags
-		featuredImage={featuredImage}
-		title={title}
-		description={description}
-		slot='head-start'
-	/>
-
-	<!-- Page Content -->
-	<Header slot='header' transition:persist />
-	<Footer slot='footer' />
 
 	<!-- Slots to pass content to layout base -->
 	<slot />

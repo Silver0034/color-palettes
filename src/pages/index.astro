@@ -10,22 +10,213 @@ export const title = 'The Home Page from my Astro Template'
 const tabTitle = 'Home Page',
 	description =
 		'This is a page description and it needs to be between 12 and 160 characters. This is a page description and it needs to be between 12 and 160 characters.',
-	structuredDataType = 'Organization'
+	defaultColor = '#000000',
+	modes = ['light', 'dark'],
+	outputSections = [
+		'accent.baseline',
+		'canvas',
+		'accent.default',
+		'accent.subdued',
+		'neutral.default',
+		'neutral.subdued'
+	]
 
 // Images
 // import featuredImage from '@assets/homepage-featured-image.png'
 ---
 
-<Layout
-	description={description}
-	structuredDataType={structuredDataType}
-	title={title}
-	tabTitle={tabTitle}
->
-	<Icon name='logo' />
+<style>
+	.output {
+		display: flex;
+		flex-direction: column;
+	}
 
+	.mode {
+		display: inline-grid;
+		gap: 1em;
+	}
+
+	button {
+		display: inline-block;
+		border: none;
+		background: transparent;
+	}
+
+	.details {
+		--color: gainsboro;
+		display: grid;
+		grid-template-columns: 4em auto;
+		grid-row: repeat(2, auto);
+		column-gap: 1em;
+		padding: 0.5em;
+		border-radius: 0.5em;
+	}
+
+	.preview {
+		display: inline-block;
+		height: 100%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		grid-row: 1 / span 2;
+		grid-column: 1;
+		background-color: var(--color);
+	}
+
+	.hex {
+		display: inline-block;
+		min-width: 8ch;
+	}
+</style>
+
+<Layout description={description} title={title} tabTitle={tabTitle}>
 	<h1>
 		Hello World
 		<Icon name='fa6-solid:check' />
 	</h1>
+
+	<form id='colors' method='GET' action='/'>
+		<input
+			type='color'
+			class='color-picker'
+			id='color-1-picker'
+			value={defaultColor}
+		/>
+		<input
+			type='text'
+			class='color-hex'
+			id='color-1-hex'
+			name='primary'
+			value={defaultColor}
+		/>
+
+		<input
+			type='color'
+			class='color-picker'
+			id='color-2-picker'
+			value={defaultColor}
+		/>
+		<input
+			type='text'
+			class='color-hex'
+			id='color-2-hex'
+			name='accent'
+			value={defaultColor}
+		/>
+		<input type='submit' value='Submit' />
+	</form>
+
+	<div id='output'>
+		{
+			modes.map((mode) => (
+				<div class:list={['mode', mode]}>
+					{outputSections.map((section) => (
+						<div
+							class='details'
+							data-color='#dcdcdc'
+							style={{
+								'--color': '--' + section.replace('.', '_')
+							}}
+						>
+							<button
+								class='preview'
+								aria-label={`Copy ${section} to clipboard`}
+							/>
+							<h2>
+								{section}:{' '}
+								<button
+									aria-label={`Copy ${section} to clipboard`}
+								>
+									#<span class='hex' />
+								</button>
+							</h2>
+							<p>
+								<Icon name='fa6-solid:circle-check' />
+								Regular text AA
+							</p>
+						</div>
+					))}
+				</div>
+			))
+		}
+	</div>
 </Layout>
+
+<script>
+	import { createPalette } from '@utilities/palettes'
+
+	const updateColorInputsOnChange = (event: Event) => {
+		if (!event || !event.target) return
+
+		const target = event.target as HTMLElement
+
+		let input = target.closest(
+			'.color-picker, .color-hex'
+		) as HTMLInputElement
+		if (!input) return
+
+		const id = input?.getAttribute('id')
+		if (!id) return
+
+		const value = input.value
+
+		let sisterID
+
+		// if the input is a color picker, update the hex value
+		if (id.includes('picker')) {
+			sisterID = id.replace('picker', 'hex')
+		} else {
+			sisterID = id.replace('hex', 'picker')
+		}
+
+		const sister = document.getElementById(sisterID) as HTMLInputElement
+		if (!sister) return
+
+		sister.value = value
+
+		// Add form vars to the URL
+		const url = new URL(window.location.href)
+		const form = document.querySelector('#colors') as HTMLFormElement
+		if (form) {
+			console.log('trying')
+			const formData = new FormData(form)
+			for (const [key, value] of formData.entries()) {
+				url.searchParams.set(key, value as string)
+			}
+		}
+
+		// Update the color palette
+		const palette = createPalette(color1, color2)
+		console.log(palette)
+	}
+
+	const setListeners = () => {
+		document.addEventListener('change', updateColorInputsOnChange)
+		document.addEventListener('input', updateColorInputsOnChange)
+	}
+
+	const randomHexColor = () => {
+		return '#' + Math.floor(Math.random() * 16777215).toString(16)
+	}
+
+	setListeners()
+
+	// set initial values from url
+	const queryVars = new URLSearchParams(window.location.search)
+
+	const color1 = queryVars.get('primary') ?? randomHexColor()
+	const color2 = queryVars.get('accent') ?? randomHexColor()
+
+	const colorPicker1 = document.querySelector(
+		'#color-1-picker'
+	) as HTMLInputElement
+	const colorHex1 = document.querySelector('#color-1-hex') as HTMLInputElement
+	const colorPicker2 = document.querySelector(
+		'#color-2-picker'
+	) as HTMLInputElement
+	const colorHex2 = document.querySelector('#color-2-hex') as HTMLInputElement
+
+	colorPicker1?.setAttribute('value', color1)
+	colorHex1?.setAttribute('value', color1)
+	colorPicker2?.setAttribute('value', color2)
+	colorHex2?.setAttribute('value', color2)
+</script>

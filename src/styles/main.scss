@@ -1,9 +1,21 @@
 @use 'reset';
 @use '../../public/styles/font-fallbacks.css';
+@use 'palettes';
 
 :root {
 	font-family: Inter, 'Inter Fallback: Arial', 'Inter Fallback: Roboto',
 		'sans-serif';
+}
+
+.screen-reader-text {
+	position: absolute;
+	clip: rect(1px, 1px, 1px, 1px);
+	padding: 0;
+	border: 0;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 h1,
@@ -12,3 +24,5 @@ h3 {
 	font-family: Truculenta, 'Truculenta Fallback: Arial',
 		'Truculenta Fallback: Roboto', 'sans-serif';
 }
+
+@include palettes.create(#490924, #492609);
